@@ -25,7 +25,7 @@ quiz_data = [
         'correct_option': 2
     },
     {
-        'question': 'С помощью какой команды подключаются модули в Python?',
+        'question': 'C помощью какой команды подключаются модули в Python?',
         'options': ['include', 'import', 'open', 'input'],
         'correct_option': 1
     },
@@ -46,7 +46,7 @@ quiz_data = [
     },
     {
         'question': 'Символ переход на новую строку',
-        'options': ['\v', '\t', 'r', '\n'],
+        'options': ['\\v', '\\t', '\\r', '\\n'],
         'correct_option': 3
-    },
+    }
 ]

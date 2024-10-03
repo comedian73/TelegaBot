@@ -2,7 +2,6 @@ import asyncio
 import logging
 import dispatcher, logic
 from aiogram import Bot
-from aiogram.filters.command import Command
 
 # Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.INFO)

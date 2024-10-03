@@ -29,7 +29,7 @@ async def cmd_quiz(message: types.Message):
 
 
 @dp.callback_query(F.data)
-async def right_answer(callback: types.CallbackQuery):
+async def callback(callback: types.CallbackQuery):
     # редактируем текущее сообщение с целью убрать кнопки (reply_markup=None)
     await callback.bot.edit_message_reply_markup(
         chat_id=callback.from_user.id,
@@ -40,13 +40,14 @@ async def right_answer(callback: types.CallbackQuery):
     # Получение текущего вопроса для данного пользователя
     current_question_index = await get_quiz_index(callback.from_user.id)
     correct_option = quiz_data[current_question_index]['correct_option']
-    if F.data == "right_answer":
+
+    if callback.data == "right_answer":
         # Отправляем в чат сообщение, что ответ верный
         await callback.message.answer("Верно!")
     else:
         # Отправляем в чат сообщение об ошибке с указанием верного ответа
         await callback.message.answer(f"Неправильно. Правильный ответ: {quiz_data[current_question_index]['options'][correct_option]}")
-        
+
     # Обновление номера текущего вопроса в базе данных
     current_question_index += 1
     await update_quiz_index(callback.from_user.id, current_question_index)
