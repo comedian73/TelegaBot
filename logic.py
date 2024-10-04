@@ -12,6 +12,8 @@ async def create_table():
         await db.execute('''CREATE TABLE IF NOT EXISTS quiz_state (user_id INTEGER PRIMARY KEY, question_index INTEGER)''')
         # Сохраняем изменения
         await db.commit()
+        await db.execute('''CREATE TABLE IF NOT EXISTS quiz_current (user_id INTEGER PRIMARY KEY, num_correct_answers INTEGER)''')
+        await db.commit()
 
 async def update_quiz_index(user_id, index):
     # Создаем соединение с базой данных (если она не существует, она будет создана)
@@ -22,8 +24,8 @@ async def update_quiz_index(user_id, index):
         await db.commit()
 
 async def get_quiz_index(user_id):
-     # Подключаемся к базе данных
-     async with aiosqlite.connect(DB_NAME) as db:
+    # Подключаемся к базе данных
+    async with aiosqlite.connect(DB_NAME) as db:
         # Получаем запись для заданного пользователя
         async with db.execute('SELECT question_index FROM quiz_state WHERE user_id = (?)', (user_id, )) as cursor:
             # Возвращаем результат
@@ -31,7 +33,30 @@ async def get_quiz_index(user_id):
             if results is not None:
                 return results[0]
             else:
+                return int(0)
+
+async def update_correct_answers(user_id, correct):
+    # Создаем соединение с базой данных (если она не существует, она будет создана)
+    async with aiosqlite.connect(DB_NAME) as db:
+        # Вставляем новую запись или заменяем ее, если с данным user_id уже существует
+        await db.execute('INSERT OR REPLACE INTO quiz_current (user_id, num_correct_answers) VALUES (?, ?)', (user_id, correct))
+        # Сохраняем изменения
+        await db.commit()
+
+async def get_correct_answers(user_id):
+    # Подключаемся к базе данных
+    async with aiosqlite.connect(DB_NAME) as db:
+        # Получаем запись для заданного пользователя
+        async with db.execute('SELECT num_correct_answers FROM quiz_current WHERE user_id = (?)', (user_id, )) as res:
+            # Возвращаем результат
+            results = await res.fetchone()
+            if results is not None:
+                return results[0]
+            else:
                 return 0
+
+
+            
 
 def generate_options_keyboard(answer_options, right_answer):
   # Создаем сборщика клавиатур типа Inline
@@ -45,7 +70,8 @@ def generate_options_keyboard(answer_options, right_answer):
             # Присваиваем данные для колбэк запроса.
             # Если ответ верный сформируется колбэк-запрос с данными 'right_answer'
             # Если ответ неверный сформируется колбэк-запрос с данными 'wrong_answer'
-            callback_data="right_answer" if option == right_answer else "wrong_answer")
+            # callback_data="right_answer" if option == right_answer else "wrong_answer")
+            callback_data=option)
         )
 
     # Выводим по одной кнопке в столбик
@@ -72,8 +98,10 @@ async def new_quiz(message):
     user_id = message.from_user.id
     
     # сбрасываем значение текущего индекса вопроса квиза в 0
-    current_question_index = 0
-    await update_quiz_index(user_id, current_question_index)
+    # current_question_index = 0
+    # current_correct_answers = 0
+    await update_quiz_index(user_id, 0)
+    await update_correct_answers(user_id, 0)
 
     # запрашиваем новый вопрос для квиза
     await get_question(message, user_id)
