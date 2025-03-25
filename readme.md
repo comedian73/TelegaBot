@@ -20,4 +20,4 @@
 
 ### Примечание:
 
-Если после запуска кода в колабе или в VSCode бот не будет найден в телеграм, то необходимо создать своего бота через [BotFather](https://telegram.me/BotFather). Инструкцию по созданию бота вы можете прочитать [здесь](https://github.com/comedian73/TelegaBot/blob/main/bot_father_instruction.md)
+Если после запуска кода в колабе или в VSCode бот не будет найден в телеграм, то необходимо создать своего бота через [BotFather](https://telegram.me/BotFather), (инструкцию по созданию бота вы можете прочитать [здесь](https://github.com/comedian73/TelegaBot/blob/main/bot_father_instruction.md)) и полученный API Key задать в переменную `API_TOKEN` вместо имеющегося.
